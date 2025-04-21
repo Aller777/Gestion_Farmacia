@@ -107,7 +107,7 @@ class ProductoResource extends Resource
                     ->iconColor('info')
                     ->description('Nombre del producto')
                     ->wrap(),
-    
+
                 Tables\Columns\TextColumn::make('precio_compra')
                     ->label('Compra')
                     ->money('PEN')
@@ -116,40 +116,40 @@ class ProductoResource extends Resource
                     ->icon('heroicon-o-arrow-down')
                     ->iconColor('danger')
                     ->description('Precio de compra del producto'),
-    
+
                 Tables\Columns\TextColumn::make('precio_venta')
                     ->label('Venta')
                     ->money('PEN')
                     ->sortable()
                     ->badge()
                     ->icon('heroicon-o-arrow-up')
-                    ->iconColor('success')
+                    ->color('success')
                     ->description('Precio de venta del producto'),
-    
+
                 Tables\Columns\TextColumn::make('stock')
                     ->label('Stock')
                     ->sortable()
                     ->badge()
                     ->icon('heroicon-o-archive-box')
-                    ->iconColor('primary')
+                    ->color('info')
                     ->description('Cantidad en stock disponible'),
-    
+
                 Tables\Columns\TextColumn::make('stock_minimo')
                     ->label('Mínimo')
                     ->sortable()
                     ->badge()
                     ->icon('heroicon-o-exclamation-circle')
-                    ->iconColor('warning')
+                    ->color('danger')
                     ->description('Stock mínimo permitido'),
-    
+
                 Tables\Columns\TextColumn::make('fecha_vencimiento')
                     ->label('Vence')
                     ->date()
                     ->sortable()
                     ->icon('heroicon-o-calendar-days')
-                    ->iconColor('danger')
+                    ->iconColor('gray')
                     ->description('Fecha de vencimiento'),
-    
+
                 Tables\Columns\TextColumn::make('categoria.nombre')
                     ->label('Categoría')
                     ->sortable()
@@ -157,7 +157,7 @@ class ProductoResource extends Resource
                     ->icon('heroicon-o-tag')
                     ->iconColor('info')
                     ->description('Categoría del producto'),
-    
+
                 Tables\Columns\TextColumn::make('proveedor.nombre')
                     ->label('Proveedor')
                     ->sortable()
@@ -165,7 +165,7 @@ class ProductoResource extends Resource
                     ->icon('heroicon-o-truck')
                     ->iconColor('secondary')
                     ->description('Proveedor del producto'),
-    
+
                 Tables\Columns\TextColumn::make('created_at')
                     ->label('Creado')
                     ->dateTime()
@@ -174,7 +174,7 @@ class ProductoResource extends Resource
                     ->icon('heroicon-o-clock')
                     ->iconColor('gray')
                     ->description('Fecha de creación'),
-    
+
                 Tables\Columns\TextColumn::make('updated_at')
                     ->label('Actualizado')
                     ->dateTime()
@@ -184,16 +184,16 @@ class ProductoResource extends Resource
                     ->iconColor('gray')
                     ->description('Última actualización'),
             ])
-    
-    
+
+
             ->defaultSort('created_at', 'desc')
             ->filters([
                 // Agrega filtros si lo necesitas
             ])
             ->actions([
                 Tables\Actions\ViewAction::make()
-                ->icon('heroicon-o-eye')
-                ->tooltip('Ver detalles'),
+                    ->icon('heroicon-o-eye')
+                    ->tooltip('Ver detalles'),
                 Tables\Actions\EditAction::make()->label('Editar'),
             ])
             ->bulkActions([

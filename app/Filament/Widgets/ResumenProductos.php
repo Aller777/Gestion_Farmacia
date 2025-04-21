@@ -14,8 +14,8 @@ class ResumenProductos extends BaseWidget
         $productosConStockBajo = Producto::where('stock', '<', 10)->get();
         $productosNombres = $productosConStockBajo->pluck('nombre')->implode(', ');
 
-        // Verificar si ya hemos mostrado la notificación 5 veces
-        if ($productosConStockBajo->count() > 0 && session('stock_notification_count', 0) < 5) {
+        // Mostrar notificación si hay productos con stock bajo
+        if ($productosConStockBajo->count() > 0) {
             Notification::make()
                 ->title('¡Stock Bajo Detectado!')
                 ->body("Productos con stock bajo: $productosNombres")
@@ -23,9 +23,6 @@ class ResumenProductos extends BaseWidget
                 ->danger()
                 ->persistent()
                 ->send();
-
-            // Incrementar el contador de notificaciones
-            session()->put('stock_notification_count', session('stock_notification_count', 0) + 1);
         }
 
         return [
@@ -46,4 +43,3 @@ class ResumenProductos extends BaseWidget
         ];
     }
 }
-

@@ -99,7 +99,7 @@ class CategoriaResource extends Resource
                 TextColumn::make('descripcion')
                     ->label('Descripción')
                     ->limit(50)
-                    ->iconColor('purple')
+                    ->iconColor('secondary')
                     ->searchable()
                     ->icon('heroicon-o-document-text') // Ícono de documento para "Descripción"
 
@@ -108,7 +108,7 @@ class CategoriaResource extends Resource
                 TextColumn::make('created_at')
                     ->label('Fecha de Registro')
                     ->dateTime('d/m/Y H:i')
-                    ->iconColor('secondary')
+                    ->color('danger')
                     ->sortable()
                     ->icon('heroicon-o-calendar') // Ícono de calendario para "Fecha de Registro"
 
