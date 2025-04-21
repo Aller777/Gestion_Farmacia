@@ -10,16 +10,22 @@ class ResumenProveedores extends BaseWidget
 {
     protected function getCards(): array
     {
+        // Obtener los proveedores con productos con stock bajo
+        $proveedoresConStockBajo = Proveedor::whereHas('productos', function ($query) {
+            $query->where('stock', '<', 10); // Ajusta el valor según tu lógica de stock bajo
+        })->get();
+
+        // Crear una cadena con los nombres de los proveedores que tienen productos con stock bajo
+        $proveedoresNombres = $proveedoresConStockBajo->pluck('nombre')->implode(', ');
+
         return [
             Card::make('Total de Proveedores', Proveedor::count())
                 ->description('Cantidad registrada actualmente')
                 ->icon('heroicon-o-user-group')
                 ->color('primary'),
 
-            // Proveedores con stock bajo
-            Card::make('Proveedores con Stock Bajo', Proveedor::whereHas('productos', function ($query) {
-                $query->where('stock', '<', 10); // Ajusta el valor según tu lógica de stock bajo
-            })->count())
+            // Proveedores con productos con stock bajo
+            Card::make('Proveedores con Stock Bajo', $proveedoresNombres)
                 ->description('Proveedores con productos en stock bajo')
                 ->icon('heroicon-o-exclamation-circle')
                 ->color('danger'),
@@ -31,3 +37,4 @@ class ResumenProveedores extends BaseWidget
         ];
     }
 }
+

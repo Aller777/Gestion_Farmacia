@@ -18,6 +18,9 @@ use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\Repeater;
+use Illuminate\Support\Facades\Http;
+use App\Models\Cliente;
+
 
 class VentaResource extends Resource
 {
@@ -34,92 +37,131 @@ class VentaResource extends Resource
     {
         return $form->schema([
             Forms\Components\Section::make('Datos de la Venta')
-                ->columns(2)
-                ->schema([
-                    Select::make('cliente_id')
-                        ->label('Cliente')
-                        ->relationship('cliente', 'nombre')
-                        ->searchable()
-                        ->nullable(),
+            ->columns(2)
+            ->schema([
+                Select::make('cliente_id')
+                    ->label('Cliente')
+                    ->relationship('cliente', 'nombre')
+                    ->nullable()
+                    ->createOptionForm([
+                        TextInput::make('dni')
+                            ->required()
+                            ->unique(column: 'dni', ignorable: null)
+                            ->length(8)
+                            ->numeric()
+                            ->label('DNI'),
+                    ])
+                    ->createOptionAction(function ($action) {
+                        return $action->label('Registrar nuevo cliente por DNI');
+                    })
+                    ->createOptionUsing(function (array $data) {
+                        // Obtener el DNI ingresado
+                        $dni = $data['dni'];
+                        
+                        // Llamada a la API para obtener la información del cliente
+                        $response = Http::get("https://api.apis.net.pe/v1/dni?numero=$dni");
 
-                    Select::make('user_id')
-                        ->label('Vendedor')
-                        ->relationship('user', 'name')
-                        // ->searchable()
-                        ->required(),
-                    DateTimePicker::make('fecha_venta')
-                        ->label('Fecha de Venta')
-                        ->required(),
+                        if ($response->successful()) {
+                            $dataFromApi = $response->json();
 
-                    TextInput::make('total')
-                        ->label('Total General')
-                        ->numeric()
-                        ->disabled()
-                        ->dehydrated()
-                        ->required()
-                        ->afterStateHydrated(function (callable $set, callable $get) {
-                            $productos = $get('productos') ?? [];
-                            $total = collect($productos)->sum(fn($item) => ($item['precio'] ?? 0) * ($item['cantidad'] ?? 0));
-                            $set('total', $total);
-                        }),
-                ]),
+                            // Crear el nombre completo
+                            $nombreCompleto = trim(($dataFromApi['nombres'] ?? '') . ' ' . ($dataFromApi['apellidoPaterno'] ?? '') . ' ' . ($dataFromApi['apellidoMaterno'] ?? ''));
+                            $telefono = $dataFromApi['celular'] ?? '';
+                            $direccion = $dataFromApi['direccion'] ?? '';
 
-            Forms\Components\Section::make('Productos')
-                ->description('Agrega los productos vendidos en esta venta')
-                ->schema([
-                    Repeater::make('productos')
-                        ->label('Lista de productos')
-                        ->columns(4)
-                        ->schema([
-                            Select::make('producto_id')
-                                ->label('Producto')
-                                ->options(Producto::all()->pluck('nombre', 'id'))
-                                ->searchable()
-                                ->reactive()
-                                ->afterStateUpdated(function (callable $set, $state) {
-                                    $producto = Producto::find($state);
-                                    if ($producto) {
-                                        $set('precio', $producto->precio_venta);
-                                    }
-                                })
-                                ->required(),
+                            // Crear el cliente en la base de datos
+                            $cliente = \App\Models\Cliente::create([
+                                'dni' => $dni,
+                                'nombre' => $nombreCompleto,
+                                'telefono' => $telefono,
+                                'direccion' => $direccion,
+                            ]);
 
-                            TextInput::make('precio')
-                                ->label('Precio Unitario')
-                                ->numeric()
-                                ->disabled()
-                                ->reactive()
-                                ->required(),
+                            // Devolver el ID del cliente recién creado para que se seleccione automáticamente en el Select
+                            return $cliente->getKey();
+                        }
 
-                            TextInput::make('cantidad')
-                                ->label('Cantidad')
-                                ->numeric()
-                                ->reactive()
-                                ->afterStateUpdated(function (callable $set, callable $get) {
-                                    $precio = $get('precio') ?? 0;
-                                    $cantidad = $get('cantidad') ?? 0;
-                                    $set('subtotal', $precio * $cantidad);
-                                })
-                                ->required(),
+                        // Si no se obtiene la información de la API, devolver null
+                        return null;
+                    }),
 
-                            TextInput::make('subtotal')
-                                ->label('Subtotal')
-                                ->numeric()
-                                ->disabled()
-                                ->dehydrated(false),
-                        ])
-                        ->minItems(1)
-                        ->maxItems(10)
-                        ->defaultItems(1)
-                        ->required()
-                        ->afterStateUpdated(function (callable $set, $state) {
-                            $total = collect($state)->sum(fn($item) => ($item['precio'] ?? 0) * ($item['cantidad'] ?? 0));
-                            $set('total', $total);
-                        }),
-                ]),
-        ]);
-    }
+                Select::make('user_id')
+                    ->label('Vendedor')
+                    ->relationship('user', 'name')
+                    ->required(),
 
+                DateTimePicker::make('fecha_venta')
+                    ->label('Fecha de Venta')
+                    ->required(),
+
+                TextInput::make('total')
+                    ->label('Total General')
+                    ->numeric()
+                    ->disabled()
+                    ->dehydrated()
+                    ->required()
+                    ->afterStateHydrated(function (callable $set, callable $get) {
+                        $productos = $get('productos') ?? [];
+                        $total = collect($productos)->sum(fn($item) => ($item['precio'] ?? 0) * ($item['cantidad'] ?? 0));
+                        $set('total', $total);
+                    }),
+            ]),
+
+        Forms\Components\Section::make('Productos')
+            ->description('Agrega los productos vendidos en esta venta')
+            ->schema([
+                Repeater::make('productos')
+                    ->label('Lista de productos')
+                    ->columns(4)
+                    ->schema([
+                        Select::make('producto_id')
+                            ->label('Producto')
+                            ->options(Producto::all()->pluck('nombre', 'id'))
+                            ->searchable()
+                            ->reactive()
+                            ->afterStateUpdated(function (callable $set, $state) {
+                                $producto = Producto::find($state);
+                                if ($producto) {
+                                    $set('precio', $producto->precio_venta);
+                                }
+                            })
+                            ->required(),
+
+                        TextInput::make('precio')
+                            ->label('Precio Unitario')
+                            ->numeric()
+                            ->disabled()
+                            ->reactive()
+                            ->required(),
+
+                        TextInput::make('cantidad')
+                            ->label('Cantidad')
+                            ->numeric()
+                            ->reactive()
+                            ->afterStateUpdated(function (callable $set, callable $get) {
+                                $precio = $get('precio') ?? 0;
+                                $cantidad = $get('cantidad') ?? 0;
+                                $set('subtotal', $precio * $cantidad);
+                            })
+                            ->required(),
+
+                        TextInput::make('subtotal')
+                            ->label('Subtotal')
+                            ->numeric()
+                            ->disabled()
+                            ->dehydrated(false),
+                    ])
+                    ->minItems(1)
+                    ->maxItems(10)
+                    ->defaultItems(1)
+                    ->required()
+                    ->afterStateUpdated(function (callable $set, $state) {
+                        $total = collect($state)->sum(fn($item) => ($item['precio'] ?? 0) * ($item['cantidad'] ?? 0));
+                        $set('total', $total);
+                    }),
+            ]),
+    ]);
+}
     public static function table(Table $table): Table
     {
         return $table
@@ -146,7 +188,7 @@ class VentaResource extends Resource
                     ->sortable()
                     ->badge()
                     ->icon('heroicon-o-currency-dollar')
-                    ->iconColor('success'),
+                    ->color('success'),
 
                 TextColumn::make('productos')
                     ->label('Productos')

@@ -29,11 +29,13 @@ class ProductoResource extends Resource
                     ->schema([
                         Forms\Components\TextInput::make('nombre')
                             ->label('Nombre del producto')
+                            ->placeholder('Ej: Paracetamol, Jabón, etc.')
                             ->required()
                             ->maxLength(255),
 
                         Forms\Components\Textarea::make('descripcion')
                             ->label('Descripción')
+                            ->placeholder('Información adicional del producto')
                             ->rows(3)
                             ->columnSpanFull(),
                     ])->columns(2),
@@ -42,29 +44,37 @@ class ProductoResource extends Resource
                     ->schema([
                         Forms\Components\TextInput::make('precio_compra')
                             ->label('Precio de compra')
+                            ->placeholder('Ej: 15.50, 8.00, 120.99')
+                            ->helperText('Precio de compra del producto')
                             ->required()
                             ->numeric()
                             ->prefix('S/'),
 
                         Forms\Components\TextInput::make('precio_venta')
                             ->label('Precio de venta')
+                            ->placeholder('Ej: S/ 15.50 por unidad')
+                            ->helperText('Precio sugerido para la venta al público')
                             ->required()
                             ->numeric()
                             ->prefix('S/'),
 
                         Forms\Components\TextInput::make('stock')
                             ->label('Stock actual')
+                            ->placeholder('Stock disponible en almacén')
+                            ->helperText('Cantidad de producto disponible en stock')
                             ->required()
                             ->numeric(),
 
                         Forms\Components\TextInput::make('stock_minimo')
                             ->label('Stock mínimo')
+                            ->helperText('Cantidad mínima permitida en stock')
                             ->required()
                             ->numeric()
                             ->default(5),
 
                         Forms\Components\DatePicker::make('fecha_vencimiento')
                             ->label('Fecha de vencimiento')
+                            ->helperText('Fecha de caducidad del producto')
                             ->suffixIcon('heroicon-o-calendar'),
                     ])->columns(3),
 
@@ -72,11 +82,14 @@ class ProductoResource extends Resource
                     ->schema([
                         Forms\Components\Select::make('categoria_id')
                             ->label('Categoría')
+                            ->helperText('Categoría a la que pertenece el producto')
+
                             ->relationship('categoria', 'nombre')
                             ->required(),
 
                         Forms\Components\Select::make('proveedor_id')
                             ->label('Proveedor')
+                            ->helperText('Proveedor del producto')
                             ->relationship('proveedor', 'nombre')
                             ->required(),
                     ])->columns(2),

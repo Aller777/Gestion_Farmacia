@@ -44,7 +44,7 @@ class CategoriaResource extends Resource
 
                     Forms\Components\TextInput::make('nombre')
                         ->label('Nombre de la Categoría')
-                        ->placeholder('Ej: Abarrotes, Tecnología, Ropa')
+                        ->placeholder('Ej: Medicamentos, Limpieza, Juguetes, etc.')
                         ->required()
                         ->maxLength(255)
                         ->autofocus()
@@ -62,7 +62,7 @@ class CategoriaResource extends Resource
 
                     Forms\Components\Textarea::make('descripcion')
                         ->label('Descripción')
-                        ->placeholder('Ej: Categoría destinada a productos tecnológicos como laptops, celulares, etc.')
+                        ->placeholder('Ej: Categoría destinada a productos Farmacéuticos, etc.')
                         ->maxLength(500)
                         ->rows(3)
                         ->columnSpanFull(),
