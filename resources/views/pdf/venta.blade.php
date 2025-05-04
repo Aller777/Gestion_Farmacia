@@ -93,7 +93,7 @@
   <body>
   <div style="text-align: center; margin-bottom: 20px;">
     <img src="{{ public_path('img/pastillas.png') }}" alt="Icono" width="50" style="margin-bottom: 10px;">
-    <h1 style="color: #4472c4; font-size: 28px; margin: 0;">BOTICA SUPERPASTILLA</h1>
+    <h1 style="color: #4472c4; font-size: 28px; margin: 0;">NOVA SALUD</h1>
 </div>
     <div style="text-align: center; margin-bottom: 20px;">
       <h2 style="color: #333; font-size: 24px;">Comprobante de Venta</h2>

@@ -48,6 +48,8 @@ class Venta extends Model
     return $this->belongsToMany(Producto::class, 'venta_producto')->withPivot('cantidad');
 }
 
+
+
 public function render()
 {
     $ventasData = Venta::selectRaw('MONTH(fecha) as month, SUM(total) as total')

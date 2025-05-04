@@ -32,5 +32,9 @@ class Dashboard extends Page
             // Aquí puedes agregar widgets adicionales si es necesario
         ];
     }
+
+
+
+
     
 }

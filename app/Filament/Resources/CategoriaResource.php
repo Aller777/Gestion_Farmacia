@@ -33,7 +33,6 @@ class CategoriaResource extends Resource
     protected static ?string $pluralModelLabel = 'CATEGORÍAS DISPONIBLES';
     protected static ?string $modelLabel = 'Categoría';
 
-    // Formulario de creación/edición
     public static function form(Form $form): Form
     {
         return $form->schema([
@@ -58,7 +57,7 @@ class CategoriaResource extends Resource
                         ])
                         ->default(1)
                         ->required()
-                        ->native(false), // mejor presentación tipo dropdown moderno
+                        ->native(false), 
 
                     Forms\Components\Textarea::make('descripcion')
                         ->label('Descripción')
@@ -72,7 +71,6 @@ class CategoriaResource extends Resource
         ]);
     }
 
-    // Tabla que muestra el listado
     public static function table(Table $table): Table
     {
         return $table
@@ -82,7 +80,7 @@ class CategoriaResource extends Resource
                     ->searchable()
                     ->sortable()
                     ->icon('heroicon-o-cube')
-                    ->iconColor('info'),  // Puedes cambiar el color del ícono
+                    ->iconColor('info'),  
 
 
                 TextColumn::make('estado')
@@ -90,10 +88,10 @@ class CategoriaResource extends Resource
                     ->badge()
                     ->formatStateUsing(fn($state) => $state ? 'Disponible' : 'No Disponible')
                     ->color(fn($state) => $state ? 'success' : 'danger')
-                    ->icon('heroicon-o-check-circle') // Ícono de check para "Disponible"
-                    ->iconColor('success') // Color verde para "Disponible"
-                    ->icon('heroicon-o-x-circle') // Ícono de "X" para "No Disponible"
-                    ->iconColor('danger') // Color rojo para "No Disponible"
+                    ->icon('heroicon-o-check-circle') 
+                    ->iconColor('success') 
+                    ->icon('heroicon-o-x-circle') 
+                    ->iconColor('danger') 
                 ,
 
                 TextColumn::make('descripcion')
@@ -101,8 +99,7 @@ class CategoriaResource extends Resource
                     ->limit(50)
                     ->iconColor('secondary')
                     ->searchable()
-                    ->icon('heroicon-o-document-text') // Ícono de documento para "Descripción"
-
+                    ->icon('heroicon-o-document-text') 
                 ,
 
                 TextColumn::make('created_at')
@@ -110,7 +107,7 @@ class CategoriaResource extends Resource
                     ->dateTime('d/m/Y H:i')
                     ->color('danger')
                     ->sortable()
-                    ->icon('heroicon-o-calendar') // Ícono de calendario para "Fecha de Registro"
+                    ->icon('heroicon-o-calendar') 
 
                 ,
 
@@ -145,7 +142,6 @@ class CategoriaResource extends Resource
             ]);
     }
 
-    // Relaciones (si las hubiera)
     public static function getRelations(): array
     {
         return [];
@@ -153,7 +149,6 @@ class CategoriaResource extends Resource
 
 
     
-    // Rutas para las páginas del recurso
     public static function getPages(): array
     {
         return [
