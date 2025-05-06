@@ -1,7 +1,5 @@
 <?php
-
 namespace App\Models;
-
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
@@ -14,9 +12,7 @@ class Venta extends Model
     protected $fillable = [
         'cliente_id',
         'user_id',
-        // 'producto_id',
         'productos',
-        // 'cantidad',
         'fecha_venta',
         'total',
     ];
@@ -26,18 +22,12 @@ class Venta extends Model
         'fecha_venta' => 'datetime',
     ];
 
-//     public function productos()
-// {
-//     return $this->belongsToMany(Producto::class);
-// }
 
-    // Relación con el cliente (puede ser null)
     public function cliente()
     {
         return $this->belongsTo(Cliente::class);
     }
 
-    // Relación con el usuario que hizo la venta
     public function user()
     {
         return $this->belongsTo(User::class);
@@ -47,8 +37,6 @@ class Venta extends Model
 {
     return $this->belongsToMany(Producto::class, 'venta_producto')->withPivot('cantidad');
 }
-
-
 
 public function render()
 {
@@ -66,3 +54,4 @@ public function render()
 }
 
 }
+

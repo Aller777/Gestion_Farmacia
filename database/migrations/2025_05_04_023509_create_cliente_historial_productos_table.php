@@ -11,13 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('ventas', function (Blueprint $table) {
+        Schema::create('cliente_historial_productos', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('cliente_id')->nullable()->constrained()->onDelete('set null');
-            $table->foreignId('user_id')->constrained()->onDelete('cascade');
-            $table->json('productos'); 
-            $table->dateTime('fecha_venta');
-            $table->decimal('total', 10, 2);
+            $table->foreignId('cliente_id')->constrained('clientes')->onDelete('cascade');  // Relación con la tabla clientes
+            $table->string('producto');
+            $table->string('frecuencia');
+            $table->integer('cantidad');
             $table->timestamps();
         });
     }
@@ -27,8 +26,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('ventas');
+        Schema::dropIfExists('cliente_historial_productos');
     }
 };
-
-
